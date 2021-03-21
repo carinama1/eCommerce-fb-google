@@ -61,47 +61,51 @@ const LoginView = () => {
   };
 
   const responseGoogle = (response) => {
-    cookies.set("u_lid", response.googleId, { path: "/" });
-    DbServices.getUserByGoogleID(response.googleId)
-      .then((data) => {
-        if (!data) {
-          DbServices.storeUser({
-            ...response.profileObj,
-            login_type: "google",
-          }).then((data) => {
+    if (response) {
+      cookies.set("u_lid", response.googleId, { path: "/" });
+      DbServices.getUserByGoogleID(response.googleId)
+        .then((data) => {
+          if (!data) {
+            DbServices.storeUser({
+              ...response.profileObj,
+              login_type: "google",
+            }).then((data) => {
+              navigate("/");
+            });
+          } else {
             navigate("/");
-          });
-        } else {
-          navigate("/");
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   const responseFacebook = (response) => {
-    cookies.set("u_lid", response.id, { path: "/" });
-    const profileObj = {
-      email: response.email,
-      name: response.name,
-      googleId: response.id,
-      imageUrl: response.picture.data.url,
-      login_type: "facebook",
-    };
-    DbServices.getUserByGoogleID(response.id)
-      .then((data) => {
-        if (!data) {
-          DbServices.storeUser(profileObj).then((data) => {
+    if (response) {
+      cookies.set("u_lid", response.id, { path: "/" });
+      const profileObj = {
+        email: response.email,
+        name: response.name,
+        googleId: response.id,
+        imageUrl: response.picture.data.url,
+        login_type: "facebook",
+      };
+      DbServices.getUserByGoogleID(response.id)
+        .then((data) => {
+          if (!data) {
+            DbServices.storeUser(profileObj).then((data) => {
+              navigate("/");
+            });
+          } else {
             navigate("/");
-          });
-        } else {
-          navigate("/");
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   return (
